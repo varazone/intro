@@ -1,9 +1,3 @@
-Vara Network 官网
-- https://vara.network/
-
-Gear Protocol 白皮书
-- https://whitepaper.gear.foundation/
-
 熟悉 Gear Wiki 文档结构, 搭建开发环境
 - [Intro to Gear Protocol](https://wiki.gear-tech.io/docs/gear/glossary)
 - [Start building](https://wiki.gear-tech.io/docs/getting-started-in-5-minutes)
