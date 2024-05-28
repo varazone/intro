@@ -9,3 +9,4 @@
 - [Gear IDEA](https://idea.gear-tech.io/)
 - [SS58 地址转换](https://ss58.org/)
 - [Gear Node 下载](https://get.gear.rs/)
+- [gstd 标准库文档](https://docs.gear.rs/gstd/index.html)
