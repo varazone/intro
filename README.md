@@ -7,4 +7,5 @@
 - [Vara Network 官网](https://vara.network/)
 - [Gear Protocol 白皮书](https://whitepaper.gear.foundation/)
 - [Gear IDEA](https://idea.gear-tech.io/)
-- [ss58 地址转换](https://ss58.org/)
+- [SS58 地址转换](https://ss58.org/)
+- [Gear Node 下载](https://get.gear.rs/)
