@@ -1,3 +1,5 @@
 # Vara Network 入门课程
 
-[slides](./slides)
+[课程大纲 & PPT](./slides)
+
+[预备资料](./prerequisites)
