@@ -131,7 +131,7 @@
 	--r-block-margin: 0em 30px 15px 30px;
 	--r-heading-margin: 0em 0em 20px 0em;
 	--r-heading-font: "Unbounded";
-	--r-heading-color: #d92f78;
+	--r-heading-color: #56f39a;
 	--r-heading-line-height: 1.5em;
 	--r-heading-letter-spacing: 0.02em;
 	--r-heading-text-transform: none;
@@ -146,8 +146,8 @@
 	/* custom PBA var */
 	--r-code-font-size: 0.75em;
 	--r-link-color: #ccc;
-	--r-link-color-decoration: #d92f78;
-	--r-color-controls: #d92f78;
+	--r-link-color-decoration: #56f39a;
+	--r-color-controls: #56f39a;
 	--r-link-color-dark: #;
 	--r-link-color-hover: #8d3aed;
 	--r-selection-background-color: #8d3aed;
