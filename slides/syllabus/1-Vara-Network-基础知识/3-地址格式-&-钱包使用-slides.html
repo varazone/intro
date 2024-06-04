@@ -35,7 +35,7 @@
 
 <pba-flex left>
 
-交易支持多种签名算法
+支持多种数字签名算法 (DSA)
 
 <br/>
 
@@ -45,11 +45,17 @@
 
 <br/>
 
-账户地址是公钥的表示形式，可包含额外的上下文信息
+账户地址派生自公钥，可包含额外的上下文信息
 <!-- .element: class="fragment" data-fragment-index="1" -->
 
-<aside class="notes"><p>(私钥签名，公钥验证)</p>
-<p>ECDSA 需要对公钥哈希后得到地址</p>
+<aside class="notes"><p>Vara 支持使用多种数字签名算法对交易进行签名</p>
+<p>大部分钱包默认都使用 sr25519 生成公私钥对</p>
+<p>其中私钥用于签名，公钥用于验签</p>
+<p>与其他两种算法相比，sr25519 对相同的内容重复签名，每次结果也会不一样</p>
+<p>不论使用哪一种签名算法，账户地址都应该具有相同的长度 256 比特，</p>
+<p>所以 sr25519 与 ed25519 可以直接使用 32 字节的公钥作为 account id</p>
+<p>而 ECDSA 的公钥长度为 33 字节，需要经过哈希得到账户地址</p>
+<p>也可以将账户地址进行编码，让它变得对用户更友好</p>
  </pba-flex></aside></script></section><section  data-markdown><script type="text/template">
 ## 账户格式
 
@@ -106,7 +112,7 @@ Secret phrase:       //Alice
 > import { encodeAddress } from "npm:@gear-js/api"
 > encodeAddress(
    "0xd43593c715fdd31c61141abd04a99fd6822c8558854ccde39a5684e7a56da27d",
-   137,
+   137, // Vara Network prefix (https://github.com/paritytech/ss58-registry)
   )
 ```
     
@@ -162,17 +168,19 @@ Invalid address: kGkLEU3e3XXkJp2WK4eNpVmSa65xUNL9QtmLPh8QfCL2EgotW
 
 ![Wallets](./wallets.png)
 </script></section><section  data-markdown><script type="text/template">
-![alt text](image.png)
+![alt text](./sw1.png)
 </script></section><section  data-markdown><script type="text/template">
-![alt text](image-1.png)
+![alt text](./sw2.png)
 </script></section><section  data-markdown><script type="text/template">
-![alt text](image-2.png)
+![alt text](./sw3.png)
 </script></section><section  data-markdown><script type="text/template">
-![alt text](image-3.png)
+![alt text](./sw4.png)
 </script></section><section  data-markdown><script type="text/template">
-![alt text](image-4.png)
+![alt text](./sw5.png)
 </script></section><section  data-markdown><script type="text/template">
-![alt text](image-5.png)</script></section>
+![alt text](./sw6.png)
+</script></section><section  data-markdown><script type="text/template">
+![alt text](./sw7.png)</script></section>
     </article>
   </main>
 
