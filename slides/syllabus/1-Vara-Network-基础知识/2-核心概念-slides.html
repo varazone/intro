@@ -29,7 +29,54 @@
     <article class="slides">
       <section  data-markdown><script type="text/template">
 
-# TODO</script></section>
+# 核心概念
+</script></section><section  data-markdown><script type="text/template">
+## 原生代币与 Gas
+
+1 VARA = 10**12 Gas
+
+单个区块消耗的 Gas 上限为 750 000 000 000
+
+相当于在标准硬件上 750ms 的执行时间
+</script></section><section  data-markdown><script type="text/template">
+## 消息 (Message)
+
+一切行为都可以通过消息来表示
+
+- 转账
+- 合约调用
+</script></section><section  data-markdown><script type="text/template">
+## 消息的结构
+
+- id
+- source
+- destination
+- value
+- payload
+- entry
+</script></section><section  data-markdown><script type="text/template">
+## 消息的生命周期
+</script></section><section  data-markdown><script type="text/template">
+## Message Queue
+</script></section><section  data-markdown><script type="text/template">
+## Actor
+
+- User account
+- Program (合约)
+</script></section><section  data-markdown><script type="text/template">
+## 合约的生命周期
+
+Active
+Terminated
+Inactive
+</script></section><section  data-markdown><script type="text/template">
+## Built-in Actors
+</script></section><section  data-markdown><script type="text/template">
+## Mailbox
+</script></section><section  data-markdown><script type="text/template">
+## Waitlist
+</script></section><section  data-markdown><script type="text/template">
+## Voucher</script></section>
     </article>
   </main>
 
@@ -110,7 +157,7 @@
     // options from URL query string
     var queryOptions = Reveal().getQueryHash() || {};
 
-    var options = extend(defaultOptions, {"width":1400,"height":900,"margin":0,"minScale":0.2,"maxScale":2,"transition":"none","controls":true,"progress":true,"center":true,"slideNumber":true,"backgroundTransition":"fade"}, queryOptions);
+    var options = extend(defaultOptions, {"width":1500,"height":900,"margin":0,"minScale":0.2,"maxScale":2,"transition":"none","controls":false,"progress":true,"center":true,"slideNumber":false,"backgroundTransition":"fade"}, queryOptions);
   </script>
 
 

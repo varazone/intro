@@ -29,7 +29,150 @@
     <article class="slides">
       <section  data-markdown><script type="text/template">
 
-# TODO</script></section>
+# 地址格式 & 钱包使用
+</script></section><section  data-markdown><script type="text/template">
+## 密码学签名方案
+
+<pba-flex left>
+
+交易支持多种签名算法
+
+<br/>
+
+- __Sr25519__ (默认)
+- Ed25519
+- ECDSA (over secp256k1)
+
+<br/>
+
+账户地址是公钥的表示形式，可包含额外的上下文信息
+<!-- .element: class="fragment" data-fragment-index="1" -->
+
+<aside class="notes"><p>(私钥签名，公钥验证)</p>
+<p>ECDSA 需要对公钥哈希后得到地址</p>
+ </pba-flex></aside></script></section><section  data-markdown><script type="text/template">
+## 账户格式
+
+<pba-flex left>
+
+```bash
+$ gear key generate --network vara --scheme sr25519
+```
+    
+<br/>
+    
+```yaml
+Secret phrase:       //Alice
+  Network ID:        vara
+  Public key (hex):  0xd43593c715fdd31c61141abd04a99fd6822c8558854ccde39a5684e7a56da27d
+  Account ID:        0xd43593c715fdd31c61141abd04a99fd6822c8558854ccde39a5684e7a56da27d
+  Public key (SS58): kGkLEU3e3XXkJp2WK4eNpVmSab5xUNL9QtmLPh8QfCL2EgotW
+  SS58 Address:      kGkLEU3e3XXkJp2WK4eNpVmSab5xUNL9QtmLPh8QfCL2EgotW
+```
+<!-- .element: class="fragment" data-fragment-index="1" -->
+    
+<br/>
+    
+- hex<!-- .element: class="fragment" data-fragment-index="2" -->
+- SS58 = base58Encode( context | hex | checksum ) <!-- .element: class="fragment" data-fragment-index="3" -->
+    
+</pba-flex>
+</script></section><section  data-markdown><script type="text/template">
+## 示例: SS58 地址解码 (Python)
+
+<pba-flex left>
+
+```python
+>>> import base58
+>>> base58.b58decode("kGkLEU3e3XXkJp2WK4eNpVmSab5xUNL9QtmLPh8QfCL2EgotW").hex()
+```
+
+<br/>
+
+```text
+'6240 d43593c715fdd31c61141abd04a99fd6822c8558854ccde39a5684e7a56da27d 05eb'
+ ^    ^                                                                ^
+ ctx  pubkey                                                           chksum
+```
+<!-- .element: class="fragment" data-fragment-index="1" -->
+
+</pba-flex>
+</script></section><section  data-markdown><script type="text/template">
+## 示例: SS58 地址编码 (JavaScript)
+
+<pba-flex left>
+
+```typescript
+> import { encodeAddress } from "npm:@gear-js/api"
+> encodeAddress(
+   "0xd43593c715fdd31c61141abd04a99fd6822c8558854ccde39a5684e7a56da27d",
+   137,
+  )
+```
+    
+<br/>
+
+```text
+"kGkLEU3e3XXkJp2WK4eNpVmSab5xUNL9QtmLPh8QfCL2EgotW"
+```
+<!-- .element: class="fragment" data-fragment-index="1" -->
+
+</pba-flex>
+</script></section><section  data-markdown><script type="text/template">
+## 使用场景
+
+<pba-flex left>
+
+构造随机地址:
+
+```rust
+let addr_1 = gstd::actor_id!(
+  "0x0000000000000000000000000000000000000000000000000000000000000001");
+
+let addr_2 = gstd::actor_id!(
+  "0x0000000000000000000000000000000000000000000000000000000000000002");
+
+assert_ne!(addr_1, addr_2, "we are testing that the addrs are not equal");
+```
+<!-- .element: class="fragment" data-fragment-index="1" -->
+
+<br/>
+    
+校验输入错误:
+
+```yaml
+Valid address:   kGkLEU3e3XXkJp2WK4eNpVmSab5xUNL9QtmLPh8QfCL2EgotW
+Invalid address: kGkLEU3e3XXkJp2WK4eNpVmSa65xUNL9QtmLPh8QfCL2EgotW
+                                          ^
+                                          b changed to 6
+```
+<!-- .element: class="fragment" data-fragment-index="2" -->
+
+</pba-flex>
+
+<aside class="notes"><p>任意 32 byte 均为合法地址</p>
+<p>开发者工具</p>
+<p>钱包，交易所，校验用户输入</p>
+</aside></script></section><section  data-markdown><script type="text/template">
+## 钱包使用
+
+- SubWallet
+- Talisman
+- Nova Wallet
+
+![Wallets](./wallets.png)
+</script></section><section  data-markdown><script type="text/template">
+![alt text](image.png)
+</script></section><section  data-markdown><script type="text/template">
+![alt text](image-1.png)
+</script></section><section  data-markdown><script type="text/template">
+![alt text](image-2.png)
+</script></section><section  data-markdown><script type="text/template">
+![alt text](image-3.png)
+</script></section><section  data-markdown><script type="text/template">
+![alt text](image-4.png)
+</script></section><section  data-markdown><script type="text/template">
+![alt text](image-5.png)</script></section>
     </article>
   </main>
 
@@ -110,7 +253,7 @@
     // options from URL query string
     var queryOptions = Reveal().getQueryHash() || {};
 
-    var options = extend(defaultOptions, {"width":1400,"height":900,"margin":0,"minScale":0.2,"maxScale":2,"transition":"none","controls":true,"progress":true,"center":true,"slideNumber":true,"backgroundTransition":"fade"}, queryOptions);
+    var options = extend(defaultOptions, {"width":1500,"height":900,"margin":0,"minScale":0.2,"maxScale":2,"transition":"none","controls":false,"progress":true,"center":true,"slideNumber":false,"backgroundTransition":"fade"}, queryOptions);
   </script>
 
 
