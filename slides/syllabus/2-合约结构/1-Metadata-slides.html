@@ -29,7 +29,124 @@
     <article class="slides">
       <section  data-markdown><script type="text/template">
 
-# TODO</script></section>
+# Metadata
+</script></section><section  data-markdown><script type="text/template">
+![alt text](image-3.png)
+
+https://github.com/varazone/template
+</script></section><section  data-markdown><script type="text/template">
+
+`./io/src/lib.rs`
+
+```rust
+/// `()` means the contract doesn't process & reply messages at the above 
+/// written entry point or doesn't implement it.
+impl Metadata for ContractMetadata {
+    /// I/O types for the `init()` entry point.
+    type Init = ();
+    /// I/O types for the `handle()` entry point.
+    /// Here the [`PingPong`] type is used for both incoming and outgoing messages.
+    type Handle = InOut<PingPong, PingPong>;
+    /// Types for miscellaneous scenarios.
+    type Others = ();
+    /// The input type for the `handle_reply()` entry point.
+    type Reply = ();
+    /// The output type for the `handle_signal()` entry point.
+    type Signal = ();
+    /// I/O types for the `state()` entry point.
+    /// You can also specify just an output ([`Out`]) or input ([`In`](gmeta::In)) type,
+    /// if both ([`InOut`]) are expected like here.
+    type State = Out<State>;
+}
+```
+</script></section><section  data-markdown><script type="text/template">
+```rust
+/// Replies with [`Pong`](PingPong::Pong) if received [`Ping`](PingPong::Ping).
+#[derive(Encode, Decode, TypeInfo, Debug, PartialEq, Eq)]
+pub enum PingPong {
+    Ping,
+    Pong,
+}
+```
+</script></section><section  data-markdown><script type="text/template">
+Demo: Custom Init Message
+
+```
+#[derive(Encode, Decode, TypeInfo, Debug, PartialEq, Eq)]
+pub enum InitMsgs {
+    Nothing,
+    Probably(Option<bool>),
+    Numbers {
+        u8: u8,
+        u32: u32,
+        u64: u64,
+        u128: u128,
+    },
+    Struct {
+        name: String,
+        vector: Vec<u8>,
+        slice: [u8; 4],
+        address: ActorId,
+    },
+    Tuple (String, Vec<u8>, [u8; 4], ActorId),
+}
+```
+</script></section><section  data-markdown><script type="text/template">
+<br/>
+
+<pba-cols>
+
+<pba-col>
+
+Before
+
+<img style="width: 400px" src="image.png"/>
+
+</pba-col>
+
+<pba-col>
+
+After
+
+<img style="width: 400px" src="image-2.png"/>
+
+</pba-col>
+
+</pba-cols>
+
+https://idea.gear-tech.io/programs/upload
+
+<!--
+
+<aside class="notes"><pre><code>#[derive(Encode, Decode, TypeInfo, Debug, PartialEq, Eq)]
+#[codec(crate = gstd::codec)]
+#[scale_info(crate = gstd::scale_info)]
+pub enum Init {
+    Numbers {
+        u8: u8,
+        u32: u32,
+        u64: u64,
+        u128: u128,
+    },
+    Struct {
+        name: String,
+        vector: Vec&lt;u8&gt;,
+        slice: [u8; 4],
+        address: ActorId,
+    },
+    Tuple (String, Vec&lt;u8&gt;, [u8; 4], ActorId),
+}
+
+/// `()` means the contract doesn&#39;t process &amp; reply messages at the above written entry point or
+/// doesn&#39;t implement it.
+impl Metadata for ContractMetadata {
+    /// I/O types for the `init()` entry point.
+    type Init = InOut&lt;Init, ()&gt;;
+</code></pre>
+<p>build.rs WithMetadata</p>
+<p>sails 的 idl 做法</p>
+<p>--&gt;</p>
+</aside></script></section>
     </article>
   </main>
 

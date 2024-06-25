@@ -29,7 +29,25 @@
     <article class="slides">
       <section  data-markdown><script type="text/template">
 
-# TODO</script></section>
+# wait 与 wake
+</script></section><section  data-markdown><script type="text/template">
+## `gstd::exec`
+
+`!`: the never type - `
+
+- `fn exit(id: ActorId) -> !` - Terminate the execution of a program.
+- `fn leave() -> !` - Break the current execution and save the state.
+- `fn wait() -> !` - Pause the current message handling.
+
+## wait
+
+https://docs.gear.rs/gstd/exec/fn.wait.html
+</script></section><section  data-markdown><script type="text/template">
+## wake
+
+https://docs.gear.rs/gstd/exec/fn.wake.html
+</script></section><section  data-markdown><script type="text/template">
+</script></section>
     </article>
   </main>
 

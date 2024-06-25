@@ -29,7 +29,162 @@
     <article class="slides">
       <section  data-markdown><script type="text/template">
 
-# TODO</script></section>
+# 合约间的消息通信
+</script></section><section  data-markdown><script type="text/template">
+## 请求-回复
+
+![alt text](image-6.png)
+
+用户与合约间的消息传递模式
+</script></section><section  data-markdown><script type="text/template">
+## 默认回复 (autoreply)
+
+![alt text](image-7.png)
+
+若处理逻辑中未进行回复，系统将自动生成空白回复
+</script></section><section  data-markdown><script type="text/template">
+## 合约间的请求与回复
+
+![alt text](image-12.png)
+
+<pba-flex center>
+
+- 请求: A 发送消息 (init, handle) => B 接收消息 (handle)
+- 回复: A 获取回复 (handle_reply) <= B 回复消息 (handle)
+
+</pba-flex>
+</script></section><section  data-markdown><script type="text/template">
+## Waiting Queue
+
+![alt text](image-9.png)
+
+思考: 如何在 handle 中对原有消息进行回复?
+
+<!--
+
+缓存收到的消息并中断程序，直到被唤醒重新处理
+
+-->
+</script></section><section  data-markdown><script type="text/template">
+## 简化版的实现
+
+![alt text](image-11.png)
+
+任务: 利用消息 API, 通过代理合约发送消息
+</script></section><section  data-markdown><script type="text/template">
+## 计数器
+
+```rust
+static mut COUNTER: i32 = 0;
+
+#[no_mangle]
+unsafe extern "C" fn handle() {
+    let command = msg::load_bytes().expect("Invalid message");
+
+    match command.as_slice() {
+        b"inc" /* 0x696e63 */ => COUNTER += 1,
+        b"dec" /* 0x646563 */ => COUNTER -= 1,
+        b"get" /* 0x676574 */ => (),
+        _ => panic!("Invalid command"),
+    };
+
+    msg::reply(COUNTER, 0).expect("Unable to reply");
+}
+```
+</script></section><section  data-markdown><script type="text/template">
+## 控制器
+
+```rust
+static mut OWNER: Option<ActorId> = None;
+static mut CONTRACT: Option<ActorId> = None;
+
+#[no_mangle]
+extern "C" fn init() {
+    // TODO: 初始化用户地址与 Counter 合约地址
+}
+
+#[no_mangle]
+extern "C" fn handle() {
+    // TODO: 向 Counter 地址发送 Inc/Dec/Get 消息
+}
+
+#[no_mangle]
+extern "C" fn handle_reply() {
+    // TODO: 接收消息的回复，并转发给用户
+}
+```
+
+
+<aside class="notes"><p>在 Actor 模型中，</p>
+<p>请求与回复是 Actor 之间使用消息进行通信时所采用的基本模式，</p>
+<p>其中 Actor 既可以是用户，也可以是合约</p>
+<p>// 合约是无法检测收到的消息是来自用户还是其他的合约</p>
+<p>// 所以也可以说这是合约之间通信的基本模式，</p>
+<p>在 gstd 合约标准库的消息模块中，</p>
+<p>我们可以使用里面的 send 和 reply 函数进行消息的发送与回复</p>
+<p>这两个函数成功执行后会返回所产生消息的 message id</p>
+<p>。</p>
+<p>在某些情况下，如果合约对收到的消息没有进行回复</p>
+<p>这个时候，Gear Protocol 的系统会自动为这条消息默认返回一条空白的回复</p>
+<p>你可能已经注意到，在之前部署模板合约的时候，尽管它的 init 入口函数</p>
+<p>没有加载初始化消息的内容，也没有对消息进行回复，</p>
+<p>但是部署之后，依然可以在 gear idea 的消息列表中看到一条默认的空白回复消息</p>
+<p>这就是由系统产生的默认回复</p>
+<p>。</p>
+<p>现在我们来看合约相互调用的情况，它可以使用这里的流程来表示</p>
+<p>假设你需要实现一个更复杂的合约 A，他的业务逻辑依赖另外一个合约 B</p>
+<p>简单起见，这里的 A 就是一个普通的代理合约，负责把用户发送的消息内容转发给合约 B,</p>
+<p>并且将 B 回复的结果作为返回给用户</p>
+<p>那么用户与这个代理合约 A，还有合约 A 与 B 之间的通信都应当符合请求/回复的模式</p>
+<p>整个调用链中包含两条请求，和两条回复消息，</p>
+<p>首先，用户向 A 合约发送消息，</p>
+<p>A 又在 init/handle 函数中向 B 发送消息，</p>
+<p>然后 B 可以在它的 handle 中进行回复
+然后 A 可以在 handle_reply 中获取收到的回复，</p>
+<p>最终由 handle 函数来对用户原本的消息进行回复</p>
+<p>以上流程如果要成立，</p>
+<p>我们就需要使用某种机制在 handle 函数中保留原本用户输入的消息</p>
+<p>并且在 handle_reply 函数中收到回复消息后，将控制流切换回 handle 函数，对原来的消息进行回复</p>
+<p>这里涉及到一个非线性的工作流，实际上是通过一个特殊的等待队列机制来实现的</p>
+<p>在合约向外发送消息需要等待回复时，可以中断当前的流程，将消息存入等待队列</p>
+<p>收到回复后再将消息从队列中取出，重新执行之前中断的逻辑</p>
+<p>相关的 API 我们会在后面异步逻辑的部分进行详细介绍</p>
+<p>。</p>
+<p>下面我们可以进行一个简单的练习，为计数器合约编写一个代理合约</p>
+<p>利用目前介绍到的 API, 通过代理合约间接进行消息的发送和回复</p>
+<p>这里我们实现的是一个简化的版本，只使用最基本的消息 API: send, reply</p>
+<p>虽然在 handle_reply 函数的上下文中，无法直接对最初的消息进行回复</p>
+<p>但是我们可以直接使用 send 向用户地址发送返回的结果</p>
+<p>使用这种方式带来的一个副作用是，用户最后会收到两条消息，</p>
+<p>一条消息是由 handle_reply 发送的，另外一条是因为 handle 逻辑中没有进行任何回复，</p>
+<p>所以系统产生了一条默认回复.</p>
+<p>。</p>
+<p>其中计数器合约只定义了一个 handle 入口函数</p>
+<p>根据收到消息的二进制 payload 的内容来改变 counter 变量的值</p>
+<p>并且作为结果返回</p>
+<p>因为它没有 Metadata, 所以在 Gear Idea 的 UI 上直接使用起来不是特别的方便</p>
+<p>只能使用 hex 的格式发送消息</p>
+<p>。</p>
+<p>我们下面的任务是编写一个控制器合约，代替我们直接向计数器发送消息</p>
+<p>首先我们会在 Metadata 中定义输入输出的消息类型</p>
+<p>在 init 函数中设置用户和控制器合约的地址</p>
+<p>然后在 handle 中向合约发送 Inc/Dec/Get 的消息</p>
+<p>并且在 handle_reply 中获取消息的回复，最后把结果转发给用户</p>
+<p>xxx</p>
+<p>合约之间一般使用请求/应答的模式进行通信</p>
+<p>A 在 init/handle 函数中向 B 发送消息，B 可以在 handle 中进行回复
+然后 A 可以在 handle_reply 中获取收到的回复</p>
+<p>下面我们通过一个基础的的例子来了解合约之间的消息通信</p>
+<p>其中计数器，合约只定义了一个 handle 入口函数</p>
+<p>根据收到消息的二进制 payload 的内容来改变 counter 变量的值</p>
+<p>然后将结果返回</p>
+<p>它因为没有 Metadata, 所以在 Gear Idea 的 UI 上直接使用起来不是特别的方便</p>
+<p>我们下面的任务是编写一个控制器合约，代替我们直接向计数器发送消息</p>
+<p>首先我们会在 Metadata 中定义输入输出的消息类型</p>
+<p>在 init 函数中设置控制器合约的地址</p>
+<p>然后在 handle 中向合约发送 Inc/Dec/Get 的消息</p>
+<p>并且在 handle_reply 中获取 Get 消息的回复</p>
+</aside></script></section>
     </article>
   </main>
 
