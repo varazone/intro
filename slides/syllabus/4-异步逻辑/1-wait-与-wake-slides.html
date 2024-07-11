@@ -37,7 +37,7 @@
 
 <br/>
 
-🤔 如何避免等待时消耗 Gas?
+🤔 如何避免同步等待/轮询?
 </script></section><section  data-markdown><script type="text/template">
 ## Waiting without wasting
 
@@ -59,15 +59,25 @@ waitlist - `wait`: 保存待处理的消息, `wake`: 将消息取出重新执行
 
 - `fn wait() -> !` - Pause the current message handling.
 
+<br/>
+
 > Put the current message into the __waiting queue__ to be awakened using the correspondent `wake` function later.
+
+<br/>
 
 https://docs.gear.rs/gstd/exec/fn.wait.html
 </script></section><section  data-markdown><script type="text/template">
 ## `!`: the never type
 
+<br/>
+
 > Represents the type of computations which never resolve to any value at all.
 
 > `break`, `continue` and `return` expressions all have type `!`
+
+<br/>
+
+https://doc.rust-lang.org/reference/types/never.html
 </script></section><section  data-markdown><script type="text/template">
 ### `std::process`
 - `fn exit(code: i32) -> !` - Terminates the current process with the specified exit code.
@@ -77,14 +87,19 @@ https://docs.gear.rs/gstd/exec/fn.wait.html
 - `fn exit(id: ActorId) -> !` - Terminate the execution of a program.
 - `fn leave() -> !` - Break the current execution and save the state.
 - `fn wait_for(duration: u32) -> !` - Same as wait, but delays handling for a specific number of blocks.
+- `fn wait_up_to(duration: u32) -> !` - Same as wait, but delays handling for the maximum number of blocks that can be paid for and doesn’t exceed the given duration.
 </script></section><section  data-markdown><script type="text/template">
 ## wake
 
 - `fn wake(message_id: MessageId) -> Result<(), Error>`
 
+<br/>
+
 > Resume previously paused message handling.
 
 > `message_id` specifies a particular message to be taken out of the __waiting queue__ and put into the __processing queue__.
+
+<br/>
 
 https://docs.gear.rs/gstd/exec/fn.wake.html
 </script></section><section  data-markdown><script type="text/template">
