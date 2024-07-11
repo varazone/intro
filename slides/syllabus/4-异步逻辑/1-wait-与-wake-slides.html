@@ -53,7 +53,7 @@
 
 <br/>
 
-waitlist - `wait`: 保存待处理的消息, `wake`: 将消息取出重新执行
+waitlist - `wait`: 保存待处理的消息, `wake`: 将消息取出重新处理
 </script></section><section  data-markdown><script type="text/template">
 ## wait
 
@@ -117,7 +117,7 @@ sequenceDiagram
 
     Handle->>Counter: msg::send (inc/dec/get)
     activate Counter
-    Note over Handle: MessageSent
+    Note over Handle: MessageSent {orig_id, sent_id}
     Handle-->>Handle: wait()
     deactivate Handle
 
@@ -126,8 +126,8 @@ sequenceDiagram
     Counter-->>Handle_Reply: msg::reply (n)
     deactivate Counter
     activate Handle_Reply
-    Note over Handle_Reply: MessageReceived
-    Handle_Reply->>Handle_Reply: wake(user_msg_id)
+    Note over Handle_Reply: MessageReceived (n)
+    Handle_Reply->>Handle_Reply: wake(orig_id)
     Handle_Reply-->>Handle: re-execution
     deactivate Handle_Reply
 
